@@ -10,7 +10,7 @@ int main(int argc, char* argv[]){
 	if(argc < 2){
 		write(0,"ERRO de introducao\n",sizeof("ERRO de introducao\n"));
 		return -1;
-	
+
 	}
 
 	mkfifo("fifo",0666);
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
 
 	int ficheiro = open(argv[1],O_WRONLY|O_CREAT|O_APPEND,0666);
 
-	char buf ;
+	char buf[10] ;
 
 	if(Rfifo == -1){
 		write(0,"ERRO ao abrir o fifo\n",sizeof("ERRO ao abrir o fifo\n"));
@@ -30,27 +30,25 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 
+int nbytes;
+	while((nbytes = read(Rfifo, buf, sizeof buf - 1)) > 0 ) // fd is the opened pipe
+	{
+	  buf[nbytes - 1] = '\0';
+		if(strcmp(buf,"-a")==0){
+	            printf("Deu");
+							write(ficheiro,&buf,1);
+	          }
+	          if(strcmp(buf,"o")==0){
+	            printf("Não deu");
+	          }
+	}
 
-	char *tipo;
-
-	while(
-		read(Rfifo,&buf,1) != 0){
-	//close(Rfifo);
-	//	tipo = strcat(&buf,"\n");
-	//	printf("%s\n", tipo);
-	//}
-
-	//	if (tipo == "-a"){
-
-	//while(read(Rfifo,&buf,1) != 0){
+/*
+	while(read(Rfifo,&buf,1) != 0)
+	{
 		write(ficheiro,&buf,1);
-	//}
-	//}
-		
-	//else{
-		//write(0,"cock&balls",sizeof("cock&balls"));
-		}
-
+	}
+*/
 
 	close(Rfifo);
 	close(ficheiro);
