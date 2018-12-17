@@ -10,11 +10,20 @@
 int main(int argc, char* argv[]){
 
 	int Wfifo;
-
+	int Wfifotipo;
 	
+	char tipocomando[4];
+	char dadosconcretos[30];
+
+	strcpy(tipocomando,argv[1]);
+	strcat(tipocomando,"\n");
+	strcpy(dadosconcretos, argv[2]);
+	strcat(dadosconcretos,"\n");
 
 	if(argc > 1){
 		Wfifo = open("fifo",O_WRONLY);
+		Wfifotipo = open("fifotipo",O_WRONLY);
+
 	}
 	else{
 		write(0,"ERRO \n",sizeof("ERRO \n"));
@@ -22,17 +31,22 @@ int main(int argc, char* argv[]){
 	}
 
 
-	if (Wfifo == -1){
+	if (Wfifo == -1 || Wfifotipo == -1) {
 		write(0,"ERRO a abrir o pipe \n",sizeof("ERRO a abrir o pipe \n"));
 		return -1;
 	}
 
-	char *tipocomando = strcat(argv[1],"\n");
-	//char *nome = strcat(argv[2],"\n");
-	write(Wfifo,nome,strlen(tipocomando));
-	printf("%s\n", tipocomando );
-	//write(Wfifo,nome,strlen(nome));
+
+
+	
+	write(Wfifotipo,tipocomando,strlen(tipocomando));
+
+	write(Wfifo,dadosconcretos,strlen(dadosconcretos));
+
+
+	close(Wfifotipo);
 	close(Wfifo);
+	
 	return 0;
 
 }
